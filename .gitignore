@@ -137,3 +137,13 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Vercel local folder
+.vercel
+
+# VSCode settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
