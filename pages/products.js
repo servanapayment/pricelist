@@ -3,10 +3,13 @@ import { useRouter } from 'next/router';
 export async function getServerSideProps(context) {
   const { page = 1, provider = '', search = '' } = context.query;
 
-  const res = await fetch(`http://localhost:8080/price-list?page=${page}&limit=20&provider=${provider}&search=${search}`);
+  // Gunakan environment variable API_URL
+  const baseUrl = process.env.API_URL;
+
+  const res = await fetch(`${baseUrl}/price-list?page=${page}&limit=20&provider=${provider}&search=${search}`);
   const data = await res.json();
 
-  const resProviders = await fetch(`http://localhost:8080/providers`);
+  const resProviders = await fetch(`${baseUrl}/providers`);
   const providerData = await resProviders.json();
 
   return { 
