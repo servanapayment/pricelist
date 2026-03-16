@@ -110,22 +110,36 @@ export default function Products({ products, total, page, provider, search, prov
       ))}
 
       {/* Pagination */}
-      <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
-        <button disabled={page <= 1} onClick={prevPage}>Previous</button>
-        <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
-        <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
-      </div>
+<div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
+  <button disabled={page <= 1} onClick={prevPage}>Previous</button>
+  <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
+  <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
+</div>
 
-      {/* CSS inline untuk status */}
-      <style jsx>{`
-        .status-open {
-          color: green;
-          font-weight: bold;
-        }
-        .status-closed {
-          color: red;
-        }
-      `}</style>
-    </div>
+{/* CSS inline */}
+<style jsx>{`
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    text-align: center;   /* ✅ teks rata tengah */
+    vertical-align: middle;
+    padding: 8px;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  .status-open {
+    color: green;
+    font-weight: bold;
+  }
+  .status-closed {
+    color: red;
+    font-weight: bold;
+  }
+`}</style>
+</div>
+
   );
 }
