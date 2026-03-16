@@ -122,13 +122,20 @@ export default function Products({ products, total, page, provider, search, prov
     width: 100%;
     border-collapse: collapse;
   }
-  th, td {
-    text-align: center;   /* ✅ teks rata tengah */
+  th {
+    text-align: center;       /* header rata tengah */
+    vertical-align: middle;
+    padding: 10px;
+    background-color: #f2f2f2;
+  }
+  td {
+    text-align: center;       /* default semua kolom rata tengah */
     vertical-align: middle;
     padding: 8px;
   }
-  th {
-    background-color: #f2f2f2;
+  /* khusus kolom Nama Produk (kolom ke-2) rata kiri */
+  td:nth-child(2) {
+    text-align: left;
   }
   .status-open {
     color: green;
@@ -139,6 +146,7 @@ export default function Products({ products, total, page, provider, search, prov
     font-weight: bold;
   }
 `}</style>
+
 </div>
 
   );
