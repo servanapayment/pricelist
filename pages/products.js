@@ -121,31 +121,47 @@ export default function Products({ products, total, page, provider, search, prov
   table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
   }
-  th {
-    text-align: center;       /* header rata tengah */
-    vertical-align: middle;
+
+  th, td {
+    border: 1px solid #ddd;       /* garis antar kolom */
     padding: 10px;
-    background-color: #f2f2f2;
-  }
-  td {
-    text-align: center;       /* default semua kolom rata tengah */
+    text-align: center;           /* rata tengah */
     vertical-align: middle;
-    padding: 8px;
   }
+
+  th {
+    background-color: #f2f2f2;    /* header abu-abu */
+    font-weight: bold;
+  }
+
   /* khusus kolom Nama Produk (kolom ke-2) rata kiri */
   td:nth-child(2) {
     text-align: left;
   }
+
+  /* efek zebra striping */
+  tbody tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+
+  /* efek hover */
+  tbody tr:hover {
+    background-color: #e6f7ff;
+  }
+
   .status-open {
     color: green;
     font-weight: bold;
   }
+
   .status-closed {
     color: red;
     font-weight: bold;
   }
 `}</style>
+
 
 </div>
 
