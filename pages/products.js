@@ -3,10 +3,9 @@ import { useRouter } from 'next/router';
 export async function getServerSideProps(context) {
   const { page = 1, provider = '', search = '' } = context.query;
 
-  // Gunakan environment variable API_URL
   const baseUrl = process.env.API_URL;
 
-  const res = await fetch(`${baseUrl}/price-list?page=${page}&limit=20&provider=${provider}&search=${search}`);
+  const res = await fetch(`${baseUrl}/price-list?page=${page}&limit=100&provider=${provider}&search=${search}`);
   const data = await res.json();
 
   const resProviders = await fetch(`${baseUrl}/providers`);
@@ -45,6 +44,19 @@ export default function Products({ products, total, page, provider, search, prov
     router.push(`/products?provider=${provider}&search=${search}&page=${page - 1}`);
   };
 
+  // 🔧 Grouping berdasarkan prefix kode
+  const grouped = products.reduce((acc, p) => {
+    const prefix = p.kode.replace(/[0-9]+$/, ""); // ambil prefix sebelum angka
+    if (!acc[prefix]) acc[prefix] = [];
+    acc[prefix].push(p);
+    return acc;
+  }, {});
+
+  // 🔧 Sorting harga termurah dulu di tiap grup
+  Object.keys(grouped).forEach((prefix) => {
+    grouped[prefix].sort((a, b) => a.harga_jual - b.harga_jual);
+  });
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>Daftar Produk</h1>
@@ -66,27 +78,36 @@ export default function Products({ products, total, page, provider, search, prov
         </form>
       </div>
 
-      {/* Tabel Produk */}
-      <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead style={{ backgroundColor: "#f2f2f2" }}>
-          <tr>
-            <th>Kode</th>
-            <th>Nama Produk</th>
-            <th>Provider</th>
-            <th>Harga Jual</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((p) => (
-            <tr key={p.kode}>
-              <td>{p.kode}</td>
-              <td>{p.nama}</td>
-              <td>{p.provider}</td>
-              <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Render per grup berdasarkan prefix kode */}
+      {Object.keys(grouped).map((prefix) => (
+        <div key={prefix} style={{ marginBottom: "30px" }}>
+          <h2>Produk {prefix}</h2>
+          <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead style={{ backgroundColor: "#f2f2f2" }}>
+              <tr>
+                <th>Kode</th>
+                <th>Nama Produk</th>
+                <th>Provider</th>
+                <th>Harga Jual</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {grouped[prefix].map((p) => (
+                <tr key={p.kode}>
+                  <td>{p.kode}</td>
+                  <td>{p.nama}</td>
+                  <td>{p.provider}</td>
+                  <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
+                  <td className={p.aktif ? "status-open" : "status-closed"}>
+                    {p.aktif ? "Open" : "Closed"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
 
       {/* Pagination */}
       <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
@@ -94,6 +115,17 @@ export default function Products({ products, total, page, provider, search, prov
         <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
         <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
       </div>
+
+      {/* CSS inline untuk status */}
+      <style jsx>{`
+        .status-open {
+          color: green;
+          font-weight: bold;
+        }
+        .status-closed {
+          color: red;
+        }
+      `}</style>
     </div>
   );
 }
