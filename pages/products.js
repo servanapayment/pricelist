@@ -139,9 +139,12 @@ export default function Products({ products, total, page, provider, search, prov
   }
 
   /* ✅ Kolom Nama Produk (kolom ke-2) ikut rata tengah */
-  td:nth-child(2), th:nth-child(2) {
-    text-align: center;
-  }
+  td:nth-child(2) {
+  text-align: center;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
 
   /* Zebra striping */
   tbody tr:nth-child(even) {
