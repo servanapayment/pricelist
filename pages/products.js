@@ -121,15 +121,16 @@ export default function Products({ products, total, page, provider, search, prov
   table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;       /* ✅ bikin kolom punya lebar tetap */
+    table-layout: fixed;       /* ✅ kolom punya lebar konsisten */
     margin-bottom: 20px;
   }
 
   th, td {
     border: 1px solid #ddd;
     padding: 10px;
-    text-align: center;
+    text-align: center !important;   /* ✅ paksa rata tengah */
     vertical-align: middle;
+    word-wrap: break-word;           /* biar teks panjang tetap rapi */
   }
 
   th {
@@ -137,23 +138,17 @@ export default function Products({ products, total, page, provider, search, prov
     font-weight: bold;
   }
 
-  /* ✅ Kolom pertama (Kode) lebar tetap */
-  th:nth-child(1),
-  td:nth-child(1) {
-    width: 120px;              /* atur sesuai kebutuhan */
+  /* khusus kolom Nama Produk (kolom ke-2) rata kiri */
+  td:nth-child(2), th:nth-child(2) {
+    text-align: left !important;
   }
 
-  /* Kolom Nama Produk rata kiri */
-  td:nth-child(2) {
-    text-align: left;
-  }
-
-  /* Zebra striping */
+  /* zebra striping */
   tbody tr:nth-child(even) {
     background-color: #fafafa;
   }
 
-  /* Hover effect */
+  /* hover effect */
   tbody tr:hover {
     background-color: #e6f7ff;
   }
@@ -168,6 +163,7 @@ export default function Products({ products, total, page, provider, search, prov
     font-weight: bold;
   }
 `}</style>
+
 
 
 
