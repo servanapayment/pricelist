@@ -109,6 +109,65 @@ export default function Products({ products, total, page, provider, search, prov
 
       {/* CSS inline */}
       <style jsx>{`
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+          margin-bottom: 20px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* bayangan halus */
+          border-radius: 6px;
+          overflow: hidden;
+        }
+
+        th, td {
+          border: 1px solid #ddd;
+          padding: 12px;
+          text-align: center;
+          vertical-align: middle;
+          word-wrap: break-word;
+        }
+
+        th {
+          background: linear-gradient(90deg, #f2f2f2, #e6e6e6); /* gradasi header */
+          font-weight: bold;
+          color: #333;
+        }
+
+        tbody tr:nth-child(even) {
+          background-color: #fafafa;
+        }
+
+        tbody tr:nth-child(odd) {
+          background-color: #ffffff;
+        }
+
+        tbody tr:hover {
+          background-color: #dff0ff; /* highlight saat hover */
+          transition: background-color 0.3s ease;
+        }
+
+        h2 {
+          background-color: #0070f3; /* warna biru untuk judul kategori */
+          color: white;
+          padding: 8px 12px;
+          border-radius: 4px;
+          margin-bottom: 10px;
+          font-size: 18px;
+        }
+
+        .status-open {
+          color: #2e8b57; /* hijau lebih soft */
+          font-weight: bold;
+        }
+
+        .status-closed {
+          color: #b22222; /* merah lebih soft */
+          font-weight: bold;
+        }
+
+
+      
         table {
           width: 100%;
           border-collapse: collapse;
