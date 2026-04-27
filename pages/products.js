@@ -52,7 +52,7 @@ Object.keys(grouped).forEach((kategori) => {
   grouped[kategori].sort((a, b) => a.harga_jual - b.harga_jual);
 });
 
-// Render per kategori
+// Render per kategori → tabel terpisah
 {Object.keys(grouped).map((kategori) => (
   <div key={kategori} style={{ marginBottom: "40px" }}>
     <h2 style={{ marginBottom: "10px" }}>Produk {kategori}</h2>
@@ -82,6 +82,7 @@ Object.keys(grouped).forEach((kategori) => {
     </table>
   </div>
 ))}
+
 
 
       {/* Pagination */}
