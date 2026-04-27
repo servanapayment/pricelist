@@ -13,7 +13,7 @@ export async function getServerSideProps(context) {
 
   return { 
     props: { 
-      products: data.data,   // sudah grouped object dari backend
+      products: data.data,   // grouped object dari backend
       total: data.total, 
       page: Number(page), 
       provider, 
@@ -44,77 +44,68 @@ export default function Products({ products, total, page, provider, search, prov
     router.push(`/products?provider=${provider}&search=${search}&page=${page - 1}`);
   };
 
-  // Grouped sudah dari backend
-const grouped = products || {};
+  // Data sudah grouped dari backend
+  const grouped = products || {};
 
-// Sorting harga per kategori
-Object.keys(grouped).forEach((kategori) => {
-  grouped[kategori].sort((a, b) => a.harga_jual - b.harga_jual);
-});
+  // Render per kategori → tabel terpisah
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Daftar Produk</h1>
 
-// Render per kategori → tabel terpisah
-return (
-  <div style={{ padding: "20px" }}>
-    <h1>Daftar Produk</h1>
+      {/* Filter & Search */}
+      <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+        <select value={provider} onChange={handleFilter}>
+          <option value="">Semua Provider</option>
+          {providers.map((prov) => (
+            <option key={prov.kode} value={prov.kode}>
+              {prov.nama}
+            </option>
+          ))}
+        </select>
 
-    {/* Filter & Search */}
-    <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
-      <select value={provider} onChange={handleFilter}>
-        <option value="">Semua Provider</option>
-        {providers.map((prov) => (
-          <option key={prov.kode} value={prov.kode}>
-            {prov.nama}
-          </option>
-        ))}
-      </select>
-
-      <form onSubmit={handleSearch}>
-        <input type="text" name="search" defaultValue={search} placeholder="Cari kode produk..." />
-        <button type="submit">Cari</button>
-      </form>
-    </div>
-
-    {/* Loop kategori → tabel per kategori */}
-    {Object.keys(grouped).map((kategori) => (
-      <div key={kategori} style={{ marginBottom: "40px" }}>
-        <h2 style={{ marginBottom: "10px" }}>Produk {kategori}</h2>
-        <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ backgroundColor: "#f2f2f2" }}>
-            <tr>
-              <th>Kode</th>
-              <th>Nama Produk</th>
-              <th>Provider</th>
-              <th>Harga Jual</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {grouped[kategori].map((p) => (
-              <tr key={p.kode}>
-                <td>{p.kode}</td>
-                <td>{p.nama}</td>
-                <td>{p.provider}</td>
-                <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
-                <td className={p.aktif ? "status-open" : "status-closed"}>
-                  {p.aktif ? "Open" : "Closed"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <form onSubmit={handleSearch}>
+          <input type="text" name="search" defaultValue={search} placeholder="Cari kode produk..." />
+          <button type="submit">Cari</button>
+        </form>
       </div>
-    ))}
 
-    {/* Pagination */}
-    <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
-      <button disabled={page <= 1} onClick={prevPage}>Previous</button>
-      <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
-      <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
-    </div>
-  </div>
-);
+      {/* Loop kategori → tabel per kategori */}
+      {Object.keys(grouped).map((kategori) => (
+        <div key={kategori} style={{ marginBottom: "40px" }}>
+          <h2 style={{ marginBottom: "10px" }}>Produk {kategori}</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Kode</th>
+                <th>Nama Produk</th>
+                <th>Provider</th>
+                <th>Harga Jual</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {grouped[kategori].map((p) => (
+                <tr key={p.kode}>
+                  <td>{p.kode}</td>
+                  <td>{p.nama}</td>
+                  <td>{p.provider}</td>
+                  <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
+                  <td className={p.aktif ? "status-open" : "status-closed"}>
+                    {p.aktif ? "Open" : "Closed"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
 
-
+      {/* Pagination */}
+      <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
+        <button disabled={page <= 1} onClick={prevPage}>Previous</button>
+        <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
+        <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
+      </div>
 
       {/* CSS inline */}
       <style jsx>{`
