@@ -44,65 +44,45 @@ export default function Products({ products, total, page, provider, search, prov
     router.push(`/products?provider=${provider}&search=${search}&page=${page - 1}`);
   };
 
-  // 🔧 Grouping sudah dilakukan di backend
-  const grouped = products || {};
+  // Grouped sudah dari backend
+const grouped = products || {};
 
-  // 🔧 Sorting harga termurah dulu di tiap grup
-  Object.keys(grouped).forEach((kategori) => {
-    grouped[kategori].sort((a, b) => a.harga_jual - b.harga_jual);
-  });
+// Sorting harga per kategori
+Object.keys(grouped).forEach((kategori) => {
+  grouped[kategori].sort((a, b) => a.harga_jual - b.harga_jual);
+});
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1>Daftar Produk</h1>
+// Render per kategori
+{Object.keys(grouped).map((kategori) => (
+  <div key={kategori} style={{ marginBottom: "40px" }}>
+    <h2 style={{ marginBottom: "10px" }}>Produk {kategori}</h2>
+    <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
+      <thead style={{ backgroundColor: "#f2f2f2" }}>
+        <tr>
+          <th>Kode</th>
+          <th>Nama Produk</th>
+          <th>Provider</th>
+          <th>Harga Jual</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {grouped[kategori].map((p) => (
+          <tr key={p.kode}>
+            <td>{p.kode}</td>
+            <td>{p.nama}</td>
+            <td>{p.provider}</td>
+            <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
+            <td className={p.aktif ? "status-open" : "status-closed"}>
+              {p.aktif ? "Open" : "Closed"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+))}
 
-      {/* Filter & Search */}
-      <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
-        <select value={provider} onChange={handleFilter}>
-          <option value="">Semua Provider</option>
-          {providers.map((prov) => (
-            <option key={prov.kode} value={prov.kode}>
-              {prov.nama}
-            </option>
-          ))}
-        </select>
-
-        <form onSubmit={handleSearch}>
-          <input type="text" name="search" defaultValue={search} placeholder="Cari kode produk..." />
-          <button type="submit">Cari</button>
-        </form>
-      </div>
-
-      {/* Render per grup berdasarkan kategori/prefix */}
-      {Object.keys(grouped).map((kategori) => (
-        <div key={kategori} style={{ marginBottom: "30px" }}>
-          <h2>Produk {kategori}</h2>
-          <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead style={{ backgroundColor: "#f2f2f2" }}>
-              <tr>
-                <th>Kode</th>
-                <th>Nama Produk</th>
-                <th>Provider</th>
-                <th>Harga Jual</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {grouped[kategori].map((p) => (
-                <tr key={p.kode}>
-                  <td>{p.kode}</td>
-                  <td>{p.nama}</td>
-                  <td>{p.provider}</td>
-                  <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
-                  <td className={p.aktif ? "status-open" : "status-closed"}>
-                    {p.aktif ? "Open" : "Closed"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ))}
 
       {/* Pagination */}
       <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
