@@ -48,8 +48,8 @@ export default function Products({ products, total, page, provider, search, prov
   const grouped = products || {};
 
   // 🔧 Sorting harga termurah dulu di tiap grup
-  Object.keys(grouped).forEach((prefix) => {
-    grouped[prefix].sort((a, b) => a.harga_jual - b.harga_jual);
+  Object.keys(grouped).forEach((kategori) => {
+    grouped[kategori].sort((a, b) => a.harga_jual - b.harga_jual);
   });
 
   return (
@@ -74,9 +74,9 @@ export default function Products({ products, total, page, provider, search, prov
       </div>
 
       {/* Render per grup berdasarkan kategori/prefix */}
-      {Object.keys(grouped).map((prefix) => (
-        <div key={prefix} style={{ marginBottom: "30px" }}>
-          <h2>Produk {prefix}</h2>
+      {Object.keys(grouped).map((kategori) => (
+        <div key={kategori} style={{ marginBottom: "30px" }}>
+          <h2>Produk {kategori}</h2>
           <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead style={{ backgroundColor: "#f2f2f2" }}>
               <tr>
@@ -88,7 +88,7 @@ export default function Products({ products, total, page, provider, search, prov
               </tr>
             </thead>
             <tbody>
-              {grouped[prefix].map((p) => (
+              {grouped[kategori].map((p) => (
                 <tr key={p.kode}>
                   <td>{p.kode}</td>
                   <td>{p.nama}</td>
