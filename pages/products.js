@@ -53,44 +53,68 @@ Object.keys(grouped).forEach((kategori) => {
 });
 
 // Render per kategori → tabel terpisah
-{Object.keys(grouped).map((kategori) => (
-  <div key={kategori} style={{ marginBottom: "40px" }}>
-    <h2 style={{ marginBottom: "10px" }}>Produk {kategori}</h2>
-    <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
-      <thead style={{ backgroundColor: "#f2f2f2" }}>
-        <tr>
-          <th>Kode</th>
-          <th>Nama Produk</th>
-          <th>Provider</th>
-          <th>Harga Jual</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {grouped[kategori].map((p) => (
-          <tr key={p.kode}>
-            <td>{p.kode}</td>
-            <td>{p.nama}</td>
-            <td>{p.provider}</td>
-            <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
-            <td className={p.aktif ? "status-open" : "status-closed"}>
-              {p.aktif ? "Open" : "Closed"}
-            </td>
-          </tr>
+return (
+  <div style={{ padding: "20px" }}>
+    <h1>Daftar Produk</h1>
+
+    {/* Filter & Search */}
+    <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+      <select value={provider} onChange={handleFilter}>
+        <option value="">Semua Provider</option>
+        {providers.map((prov) => (
+          <option key={prov.kode} value={prov.kode}>
+            {prov.nama}
+          </option>
         ))}
-      </tbody>
-    </table>
-  </div>
-))}
+      </select>
 
+      <form onSubmit={handleSearch}>
+        <input type="text" name="search" defaultValue={search} placeholder="Cari kode produk..." />
+        <button type="submit">Cari</button>
+      </form>
+    </div>
 
-
-      {/* Pagination */}
-      <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
-        <button disabled={page <= 1} onClick={prevPage}>Previous</button>
-        <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
-        <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
+    {/* Loop kategori → tabel per kategori */}
+    {Object.keys(grouped).map((kategori) => (
+      <div key={kategori} style={{ marginBottom: "40px" }}>
+        <h2 style={{ marginBottom: "10px" }}>Produk {kategori}</h2>
+        <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead style={{ backgroundColor: "#f2f2f2" }}>
+            <tr>
+              <th>Kode</th>
+              <th>Nama Produk</th>
+              <th>Provider</th>
+              <th>Harga Jual</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {grouped[kategori].map((p) => (
+              <tr key={p.kode}>
+                <td>{p.kode}</td>
+                <td>{p.nama}</td>
+                <td>{p.provider}</td>
+                <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
+                <td className={p.aktif ? "status-open" : "status-closed"}>
+                  {p.aktif ? "Open" : "Closed"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+    ))}
+
+    {/* Pagination */}
+    <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
+      <button disabled={page <= 1} onClick={prevPage}>Previous</button>
+      <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
+      <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
+    </div>
+  </div>
+);
+
+
 
       {/* CSS inline */}
       <style jsx>{`
