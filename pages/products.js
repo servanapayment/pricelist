@@ -13,7 +13,7 @@ export async function getServerSideProps(context) {
 
   return { 
     props: { 
-      products: data.data, 
+      products: data.data,   // sudah grouped object dari backend
       total: data.total, 
       page: Number(page), 
       provider, 
@@ -44,13 +44,8 @@ export default function Products({ products, total, page, provider, search, prov
     router.push(`/products?provider=${provider}&search=${search}&page=${page - 1}`);
   };
 
-  // 🔧 Grouping berdasarkan prefix kode
-  const grouped = products.reduce((acc, p) => {
-    const prefix = p.kode.replace(/[0-9]+$/, ""); // ambil prefix sebelum angka
-    if (!acc[prefix]) acc[prefix] = [];
-    acc[prefix].push(p);
-    return acc;
-  }, {});
+  // 🔧 Grouping sudah dilakukan di backend
+  const grouped = products || {};
 
   // 🔧 Sorting harga termurah dulu di tiap grup
   Object.keys(grouped).forEach((prefix) => {
@@ -78,7 +73,7 @@ export default function Products({ products, total, page, provider, search, prov
         </form>
       </div>
 
-      {/* Render per grup berdasarkan prefix kode */}
+      {/* Render per grup berdasarkan kategori/prefix */}
       {Object.keys(grouped).map((prefix) => (
         <div key={prefix} style={{ marginBottom: "30px" }}>
           <h2>Produk {prefix}</h2>
@@ -110,68 +105,58 @@ export default function Products({ products, total, page, provider, search, prov
       ))}
 
       {/* Pagination */}
-<div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
-  <button disabled={page <= 1} onClick={prevPage}>Previous</button>
-  <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
-  <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
-</div>
+      <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
+        <button disabled={page <= 1} onClick={prevPage}>Previous</button>
+        <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
+        <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
+      </div>
 
-{/* CSS inline */}
-<style jsx>{`
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    margin-bottom: 20px;
-  }
+      {/* CSS inline */}
+      <style jsx>{`
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+          margin-bottom: 20px;
+        }
 
-  th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;       /* default semua rata tengah */
-    vertical-align: middle;
-    word-wrap: break-word;
-  }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 10px;
+          text-align: center;
+          vertical-align: middle;
+          word-wrap: break-word;
+        }
 
-  th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
+        th {
+          background-color: #f2f2f2;
+          font-weight: bold;
+        }
 
-  /* ✅ Kolom Nama Produk (kolom ke-2) ikut rata tengah */
-  td:nth-child(2) {
-  text-align: center;
-  white-space: normal;
-  word-wrap: break-word;
-}
+        td:nth-child(2) {
+          text-align: center;
+          white-space: normal;
+          word-wrap: break-word;
+        }
 
+        tbody tr:nth-child(even) {
+          background-color: #fafafa;
+        }
 
-  /* Zebra striping */
-  tbody tr:nth-child(even) {
-    background-color: #fafafa;
-  }
+        tbody tr:hover {
+          background-color: #e6f7ff;
+        }
 
-  /* Hover effect */
-  tbody tr:hover {
-    background-color: #e6f7ff;
-  }
+        .status-open {
+          color: green;
+          font-weight: bold;
+        }
 
-  .status-open {
-    color: green;
-    font-weight: bold;
-  }
-
-  .status-closed {
-    color: red;
-    font-weight: bold;
-  }
-`}</style>
-
-
-
-
-
-</div>
-
+        .status-closed {
+          color: red;
+          font-weight: bold;
+        }
+      `}</style>
+    </div>
   );
 }
