@@ -148,7 +148,7 @@ export default function Products({ products, total, page, provider, search, prov
         }
 
         h2 {
-          background-color: #0070f3; /* warna biru untuk judul kategori */
+          background-color: #32CD32; /* warna biru untuk judul kategori */
           color: white;
           padding: 8px 12px;
           border-radius: 4px;
