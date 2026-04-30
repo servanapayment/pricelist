@@ -154,6 +154,7 @@ export default function Products({ products, total, page, provider, search, prov
           border-radius: 4px;
           margin-bottom: 10px;
           font-size: 18px;
+          text-align: center;
         }
 
         .status-open {
