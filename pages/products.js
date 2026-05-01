@@ -457,7 +457,7 @@ export default function Products({ products, total, page, provider, search, prov
         }
 
         .category-title {
-          background-color: #32CD32;
+          background-color: #0070f3;
           color: #fff;              
           padding: 10px 14px;
           border-radius: 4px;
