@@ -397,7 +397,7 @@ export default function Products({ products, total, page, provider, search, prov
               {grouped[kategori].map((p) => (
                 <tr key={p.kode}>
                   <td>{p.kode}</td>
-                  <td>{p.nama}</td>
+                  <td className="product-name">{p.nama}</td>
                   <td>{p.provider}</td>
                   <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
                   <td className={p.aktif ? "status-open" : "status-closed"}>
@@ -472,6 +472,10 @@ export default function Products({ products, total, page, provider, search, prov
           color: #fff;              /* putih pekat */
           margin-left: 12px;
           font-weight: bold;        /* lebih tebal */
+        }
+
+        .product-name {
+          text-transform: uppercase; /* teks produk kapital */
         }
 
         .status-open {
