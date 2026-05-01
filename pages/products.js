@@ -458,20 +458,22 @@ export default function Products({ products, total, page, provider, search, prov
 
         .category-title {
           background-color: #32CD32;
-          color: #fff;              /* putih pekat */
+          color: #fff;              
           padding: 10px 14px;
           border-radius: 4px;
           margin-bottom: 10px;
-          font-size: 20px;          /* lebih besar */
+          font-size: 20px;          
           text-align: center;
-          font-weight: bold;        /* lebih tebal */
+          font-weight: bold;        
+          text-transform: uppercase; /* kapital judul */
         }
 
         .category-desc {
-          font-size: 20px;          /* sama dengan title */
-          color: #fff;              /* putih pekat */
+          font-size: 20px;          
+          color: #fff;              
           margin-left: 12px;
-          font-weight: bold;        /* lebih tebal */
+          font-weight: bold;        
+          text-transform: uppercase; /* kapital penjelasan */
         }
 
         .product-name {
