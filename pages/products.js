@@ -49,8 +49,6 @@ export default function Products({ products, total, page, provider, search, prov
 
   // Mapping prefix → penjelasan kategori
   const categoryDescriptions = {
-
-// PROVIDER XL
     "AAM": "PAKET DATA XL AIGO MINI",
     "AAP": "PAKET DATA XL PURE",
     "ABL": "PAKET DATA XL AIGO BRONET",
@@ -75,6 +73,7 @@ export default function Products({ products, total, page, provider, search, prov
 
 
 // PROVIDER TELKOMSEL
+    "DOR": "PAKET DATA TELKOMSEL FLASH",
     "GMAXG": "PAKET TELKOMSEL GAMESMAX POWER GOLD MLBB",
     "GMAXS": "PAKET TELKOMSEL GAMESMAX POWER SILVER MLBB",
     "HOTSTAR": "PAKET TELKOMSEL DISNEY+ HOSTAR",
@@ -379,9 +378,9 @@ export default function Products({ products, total, page, provider, search, prov
       {/* Loop kategori → tabel per kategori */}
       {Object.keys(grouped).map((kategori) => (
         <div key={kategori} style={{ marginBottom: "40px" }}>
-          <h2>
+          <h2 className="category-title">
             Produk {kategori}
-            <span style={{ fontSize: "14px", color: "#eee", marginLeft: "10px" }}>
+            <span className="category-desc">
               {categoryDescriptions[kategori] || ""}
             </span>
           </h2>
@@ -458,7 +457,7 @@ export default function Products({ products, total, page, provider, search, prov
           transition: background-color 0.3s ease;
         }
 
-        h2 {
+        .category-title {
           background-color: #32CD32;
           color: white;
           padding: 8px 12px;
@@ -466,6 +465,13 @@ export default function Products({ products, total, page, provider, search, prov
           margin-bottom: 10px;
           font-size: 18px;
           text-align: center;
+        }
+
+        .category-desc {
+          font-size: 18px;   /* sama dengan title */
+          color: white;      /* sama dengan title */
+          margin-left: 10px;
+          font-weight: normal;
         }
 
         .status-open {
