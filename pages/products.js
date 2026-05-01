@@ -350,7 +350,6 @@ export default function Products({ products, total, page, provider, search, prov
     "AAM": "PAKET DATA AXIS AIGO MINI",
     "AAM": "PAKET DATA AXIS AIGO MINI",
     "AAM": "PAKET DATA AXIS AIGO MINI",
-
   };
 
   // Render per kategori → tabel terpisah
@@ -459,19 +458,20 @@ export default function Products({ products, total, page, provider, search, prov
 
         .category-title {
           background-color: #32CD32;
-          color: white;
-          padding: 8px 12px;
+          color: #fff;              /* putih pekat */
+          padding: 10px 14px;
           border-radius: 4px;
           margin-bottom: 10px;
-          font-size: 18px;
+          font-size: 20px;          /* lebih besar */
           text-align: center;
+          font-weight: bold;        /* lebih tebal */
         }
 
         .category-desc {
-          font-size: 18px;   /* sama dengan title */
-          color: white;      /* sama dengan title */
-          margin-left: 10px;
-          font-weight: normal;
+          font-size: 20px;          /* sama dengan title */
+          color: #fff;              /* putih pekat */
+          margin-left: 12px;
+          font-weight: bold;        /* lebih tebal */
         }
 
         .status-open {
