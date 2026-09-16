@@ -23,12 +23,12 @@ export async function getServerSideProps(context) {
 
   return { 
     props: { 
-      products: data.data || {},   // Tambahkan || {} untuk jaga-jaga jika data.data kosong
+      products: data.data || {},   // grouped object dari backend
       total: data.total || 0, 
       page: Number(page), 
       provider, 
       search,
-      providers: providerData.providers || []
+      providers: providerData.providers || [] // Pastikan default adalah array
     } 
   };
 }
@@ -55,8 +55,11 @@ export default function Products({ products, total, page, provider, search, prov
     router.push(`/products?provider=${provider}&search=${search}&page=${page - 1}`);
   };
 
-  // Data sudah grouped dari backend
+  // Pastikan data berupa objek grouped dari backend
   const grouped = products || {};
+
+  // Validasi agar providers dipastikan berupa Array sebelum di-render
+  const safeProviders = Array.isArray(providers) ? providers : [];
 
   // Mapping prefix → penjelasan kategori
   const categoryDescriptions = {
@@ -363,7 +366,7 @@ export default function Products({ products, total, page, provider, search, prov
     "AAM": "PAKET DATA AXIS AIGO MINI",
   };
 
-  // Render per kategori → tabel terpisah
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>Daftar Produk</h1>
@@ -372,7 +375,7 @@ export default function Products({ products, total, page, provider, search, prov
       <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
         <select value={provider} onChange={handleFilter}>
           <option value="">Semua Provider</option>
-          {providers.map((prov) => (
+          {safeProviders.map((prov) => (
             <option key={prov.kode} value={prov.kode}>
               {prov.nama}
             </option>
@@ -386,45 +389,50 @@ export default function Products({ products, total, page, provider, search, prov
       </div>
 
       {/* Loop kategori → tabel per kategori */}
-      {Object.keys(grouped).map((kategori) => (
-        <div key={kategori} style={{ marginBottom: "40px" }}>
-          <h2 className="category-title">
-            Produk {kategori}
-            <span className="category-desc">
-              {categoryDescriptions[kategori] || ""}
-            </span>
-          </h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Kode</th>
-                <th>Nama Produk</th>
-                <th>Provider</th>
-                <th>Harga Jual</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {grouped[kategori].map((p) => (
-                <tr key={p.kode}>
-                  <td>{p.kode}</td>
-                  <td className="product-name">{p.nama}</td>
-                  <td>{p.provider}</td>
-                  <td>Rp {p.harga_jual.toLocaleString("id-ID")}</td>
-                  <td className={p.aktif ? "status-open" : "status-closed"}>
-                    {p.aktif ? "Open" : "Closed"}
-                  </td>
+      {Object.keys(grouped).map((kategori) => {
+        // Ambil array produk di dalam kategori saat ini, pastikan berupa array aman
+        const items = Array.isArray(grouped[kategori]) ? grouped[kategori] : [];
+        
+        return (
+          <div key={kategori} style={{ marginBottom: "40px" }}>
+            <h2 className="category-title">
+              Produk {kategori}
+              <span className="category-desc">
+                {categoryDescriptions[kategori] || ""}
+              </span>
+            </h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Kode</th>
+                  <th>Nama Produk</th>
+                  <th>Provider</th>
+                  <th>Harga Jual</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ))}
+              </thead>
+              <tbody>
+                {items.map((p) => (
+                  <tr key={p.kode}>
+                    <td>{p.kode}</td>
+                    <td className="product-name">{p.nama}</td>
+                    <td>{p.provider}</td>
+                    <td>Rp {p.harga_jual ? p.harga_jual.toLocaleString("id-ID") : 0}</td>
+                    <td className={p.aktif ? "status-open" : "status-closed"}>
+                      {p.aktif ? "Open" : "Closed"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
 
       {/* Pagination */}
       <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
         <button disabled={page <= 1} onClick={prevPage}>Previous</button>
-        <span>Halaman {page} dari {Math.ceil(total / 20)}</span>
+        <span>Halaman {page} dari {Math.ceil(total / 20) || 1}</span>
         <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
       </div>
 
@@ -476,7 +484,7 @@ export default function Products({ products, total, page, provider, search, prov
           font-size: 20px;          
           text-align: center;
           font-weight: bold;        
-          text-transform: uppercase; /* kapital judul */
+          text-transform: uppercase;
         }
 
         .category-desc {
@@ -484,11 +492,11 @@ export default function Products({ products, total, page, provider, search, prov
           color: #fff;              
           margin-left: 12px;
           font-weight: bold;        
-          text-transform: uppercase; /* kapital penjelasan */
+          text-transform: uppercase;
         }
 
         .product-name {
-          text-transform: uppercase; /* teks produk kapital */
+          text-transform: uppercase;
         }
 
         .status-open {
