@@ -65,8 +65,7 @@ export default function Products({ products, total, page, currentProvider, curre
   // DAFTAR KATA/KALIMAT KHUSUS YANG INGIN DISEMBUNYIKAN DARI TAMPILAN
   // ======================================================================
   const kataDilarang = [
-    "KHUSUS TEMBAK 2X",
-    "TEMBAK",
+    "KHUSUS",
     // Anda bisa menambah kata khusus lain di sini, contoh: "PROMO TRIAL",
   ];
 
