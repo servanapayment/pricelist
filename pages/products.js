@@ -1,11 +1,13 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 export async function getServerSideProps(context) {
+  // Menangkap parameter dari URL browser (Next.js Router)
   const { page = 1, provider = '', search = '' } = context.query;
 
   const baseUrl = process.env.API_URL;
 
-  // 1. Fetch data price-list dengan bypass header ngrok
+  // 1. Fetch data price-list dengan parameter filter & search ke FastAPI
   const res = await fetch(`${baseUrl}/price-list?page=${page}&limit=100&provider=${provider}&search=${search}`, {
     headers: {
       'ngrok-skip-browser-warning': 'true',
@@ -13,7 +15,7 @@ export async function getServerSideProps(context) {
   });
   const data = await res.json();
 
-  // 2. Fetch data providers dengan bypass header ngrok
+  // 2. Fetch data list providers untuk mengisi opsi di menu dropdown <select>
   const resProviders = await fetch(`${baseUrl}/providers`, {
     headers: {
       'ngrok-skip-browser-warning': 'true',
@@ -21,41 +23,47 @@ export async function getServerSideProps(context) {
   });
   const providerData = await resProviders.json();
 
+  // Jika endpoint /providers mengembalikan array langsung (bukan objek .providers), kita tampung keduanya
+  const listProviders = providerData.providers || (Array.isArray(providerData) ? providerData : []);
+
   return { 
     props: { 
-      // Jika data.data tidak ada, coba pakai data utama. Pastikan fallback adalah array []
       products: data.data || (Array.isArray(data) ? data : []),   
       total: data.total || 0, 
       page: Number(page), 
-      provider, 
-      search,
-      providers: providerData.providers || []
+      currentProvider: provider, 
+      currentSearch: search,
+      providers: listProviders
     } 
   };
 }
 
-export default function Products({ products, total, page, provider, search, providers }) {
+export default function Products({ products, total, page, currentProvider, currentSearch, providers }) {
   const router = useRouter();
+  
+  // State lokal untuk menampung teks pencarian ketikan user sebelum tombol "Cari" diklik
+  const [searchInput, setSearchInput] = useState(currentSearch);
 
+  // Fungsi ketika pilihan Dropdown Provider diubah
   const handleFilter = (e) => {
-    router.push(`/products?provider=${e.target.value}&search=${search}&page=1`);
+    const selectedProvider = e.target.value;
+    router.push(`/products?provider=${selectedProvider}&search=${currentSearch}&page=1`);
   };
 
-  const handleSearch = (e) => {
+  // Fungsi ketika form pencarian di-submit (tombol Cari diklik / tekan enter)
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const value = e.target.search.value;
-    router.push(`/products?provider=${provider}&search=${value}&page=1`);
+    router.push(`/products?provider=${currentProvider}&search=${searchInput}&page=1`);
   };
 
   const nextPage = () => {
-    router.push(`/products?provider=${provider}&search=${search}&page=${page + 1}`);
+    router.push(`/products?provider=${currentProvider}&search=${currentSearch}&page=${page + 1}`);
   };
 
   const prevPage = () => {
-    router.push(`/products?provider=${provider}&search=${search}&page=${page - 1}`);
+    router.push(`/products?provider=${currentProvider}&search=${currentSearch}&page=${page - 1}`);
   };
 
-  // Pastikan data yang di-loop di tabel adalah Array aman
   const productList = Array.isArray(products) ? products : [];
   const safeProviders = Array.isArray(providers) ? providers : [];
 
@@ -63,24 +71,39 @@ export default function Products({ products, total, page, provider, search, prov
     <div style={{ padding: "20px" }}>
       <h1>Daftar Produk</h1>
 
-      {/* Filter & Search */}
+      {/* Filter & Search Bar */}
       <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
-        <select value={provider} onChange={handleFilter}>
+        {/* Dropdown Pilihan Provider */}
+        <select value={currentProvider} onChange={handleFilter} style={{ padding: "6px 10px", borderRadius: "4px" }}>
           <option value="">Semua Provider</option>
-          {safeProviders.map((prov) => (
-            <option key={prov.kode} value={prov.kode}>
-              {prov.nama}
-            </option>
-          ))}
+          {safeProviders.map((prov, index) => {
+            // Mengantisipasi jika properti backend bernama prov.kode/prov.id atau prov.nama/prov.name
+            const code = prov.kode || prov.id || prov.provider || prov;
+            const name = prov.nama || prov.name || code;
+            return (
+              <option key={code + index} value={code}>
+                {name.toUpperCase()}
+              </option>
+            );
+          })}
         </select>
 
-        <form onSubmit={handleSearch}>
-          <input type="text" name="search" defaultValue={search} placeholder="Cari kode produk..." />
-          <button type="submit">Cari</button>
+        {/* Input Pencarian Kode / Nama Produk */}
+        <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: "5px" }}>
+          <input 
+            type="text" 
+            value={searchInput} 
+            onChange={(e) => setSearchInput(e.target.value)} 
+            placeholder="Cari kode atau nama produk..." 
+            style={{ padding: "6px 10px", width: "220px", borderRadius: "4px", border: "1px solid #ccc" }}
+          />
+          <button type="submit" style={{ padding: "6px 12px", background: "#0070f3", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}>
+            Cari
+          </button>
         </form>
       </div>
 
-      {/* Satu tabel utama untuk semua daftar produk array */}
+      {/* Tabel Utama Daftar Produk */}
       <div style={{ marginBottom: "40px" }}>
         <table>
           <thead>
@@ -107,7 +130,7 @@ export default function Products({ products, total, page, provider, search, prov
               ))
             ) : (
               <tr>
-                <td colSpan="5">Tidak ada produk ditemukan.</td>
+                <td colSpan="5" style={{ padding: "20px", color: "#666" }}>Tidak ada produk ditemukan.</td>
               </tr>
             )}
           </tbody>
@@ -115,10 +138,14 @@ export default function Products({ products, total, page, provider, search, prov
       </div>
 
       {/* Pagination */}
-      <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
-        <button disabled={page <= 1} onClick={prevPage}>Previous</button>
-        <span>Halaman {page} dari {Math.ceil(total / 20) || 1}</span>
-        <button disabled={page * 20 >= total} onClick={nextPage}>Next</button>
+      <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <button disabled={page <= 1} onClick={prevPage} style={{ padding: "6px 12px", cursor: page <= 1 ? "not-allowed" : "pointer" }}>
+          Previous
+        </button>
+        <span>Halaman {page} dari {Math.ceil(total / 100) || 1}</span>
+        <button disabled={productList.length < 100 || (page * 100) >= total} onClick={nextPage} style={{ padding: "6px 12px", cursor: (productList.length < 100 || (page * 100) >= total) ? "not-allowed" : "pointer" }}>
+          Next
+        </button>
       </div>
 
       {/* CSS inline */}
