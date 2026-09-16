@@ -5,16 +5,26 @@ export async function getServerSideProps(context) {
 
   const baseUrl = process.env.API_URL;
 
-  const res = await fetch(`${baseUrl}/price-list?page=${page}&limit=100&provider=${provider}&search=${search}`);
+  // 1. Tambahkan konfigurasi headers di fetch price-list
+  const res = await fetch(`${baseUrl}/price-list?page=${page}&limit=100&provider=${provider}&search=${search}`, {
+    headers: {
+      'ngrok-skip-browser-warning': 'true',
+    },
+  });
   const data = await res.json();
 
-  const resProviders = await fetch(`${baseUrl}/providers`);
+  // 2. Tambahkan konfigurasi headers di fetch providers
+  const resProviders = await fetch(`${baseUrl}/providers`, {
+    headers: {
+      'ngrok-skip-browser-warning': 'true',
+    },
+  });
   const providerData = await resProviders.json();
 
   return { 
     props: { 
-      products: data.data,   // grouped object dari backend
-      total: data.total, 
+      products: data.data || {},   // Tambahkan || {} untuk jaga-jaga jika data.data kosong
+      total: data.total || 0, 
       page: Number(page), 
       provider, 
       search,
@@ -22,6 +32,7 @@ export async function getServerSideProps(context) {
     } 
   };
 }
+
 
 export default function Products({ products, total, page, provider, search, providers }) {
   const router = useRouter();
