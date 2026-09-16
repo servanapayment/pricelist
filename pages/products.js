@@ -477,7 +477,7 @@ export default function Products({ products, total, page, currentProvider, curre
         ))
       ) : (
         <div style={{ padding: "40px", textAlign: "center", border: "1px dashed #ccc", color: "#666" }}>
-          Tidak ada daftar produk ditemukan (atau produk disembunyikan oleh filter kata).
+          Tidak ada daftar produk
         </div>
       )}
 
