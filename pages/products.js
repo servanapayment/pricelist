@@ -61,15 +61,36 @@ export default function Products({ products, total, page, currentProvider, curre
   const productList = Array.isArray(products) ? products : [];
   const safeProviders = Array.isArray(providers) ? providers : [];
 
+  // ======================================================================
+  // DAFTAR KATA/KALIMAT KHUSUS YANG INGIN DISEMBUNYIKAN DARI TAMPILAN
+  // ======================================================================
+  const kataDilarang = [
+    "KHUSUS TEMBAK 2X",
+    "TEMBAK",
+    // Anda bisa menambah kata khusus lain di sini, contoh: "PROMO TRIAL",
+  ];
+
   // ==========================================
-  // PROSES PENGELOMPOKAN (GROUPING) OTOMATIS
+  // PROSES PENYARINGAN KATA & GROUPING TABEL
   // ==========================================
   const groupedProducts = {};
 
   productList.forEach((product) => {
     if (product.kode) {
+      // Ambil nama produk dan ubah ke huruf kapital untuk dicocokkan
+      const namaProduk = (product.nama || product.nama_produk || "").toUpperCase();
+
+      // Cek apakah nama produk mengandung salah satu dari kata terlarang
+      const mengandungKataTerlarang = kataDilarang.some((kata) => 
+        namaProduk.includes(kata.toUpperCase())
+      );
+
+      // JIKA MENGANDUNG KATA TERLARANG, LOMPATI / JANGAN MASUKKAN KE TABEL
+      if (mengandungKataTerlarang) {
+        return; 
+      }
+
       // Mengambil huruf depan sebagai nama kategori (misal: "AOVS1430" -> diambil "AOVS")
-      // Ekstraksi teks murni sebelum angka menggunakan Regex
       const match = product.kode.match(/^([A-Za-z]+)/);
       const kategori = match ? match[1].toUpperCase() : "LAINNYA";
 
@@ -385,7 +406,6 @@ export default function Products({ products, total, page, currentProvider, curre
     "AAM": "PAKET DATA AXIS AIGO MINI",
   };
 
-
   return (
     <div style={{ padding: "20px" }}>
       <h1>Daftar Produk</h1>
@@ -457,7 +477,7 @@ export default function Products({ products, total, page, currentProvider, curre
         ))
       ) : (
         <div style={{ padding: "40px", textAlign: "center", border: "1px dashed #ccc", color: "#666" }}>
-          Tidak ada daftar produk ditemukan.
+          Tidak ada daftar produk ditemukan (atau produk disembunyikan oleh filter kata).
         </div>
       )}
 
