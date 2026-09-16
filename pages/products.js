@@ -465,8 +465,8 @@ export default function Products({ products, total, page, currentProvider, curre
                     <td className="product-name">{p.nama || p.nama_produk || "-"}</td>
                     <td>{p.provider || "-"}</td>
                     <td>Rp {p.harga_jual ? p.harga_jual.toLocaleString("id-ID") : 0}</td>
-                    <td className={p.aktif ? "status-open" : "status-closed"}>
-                      {p.aktif ? "Open" : "Closed"}
+                    <td className={p.status?.toLowerCase() === "open" ? "status-open" : "status-closed"}>
+                    {p.status || "Closed"}
                     </td>
                   </tr>
                 ))}
