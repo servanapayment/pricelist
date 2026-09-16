@@ -405,7 +405,7 @@ export default function Products({ products, total, page, currentProvider, curre
     "AAM": "PAKET DATA AXIS AIGO MINI",
   };
 
-  return (
+   return (
     <div style={{ padding: "20px" }}>
       <h1>Daftar Produk</h1>
 
@@ -465,8 +465,8 @@ export default function Products({ products, total, page, currentProvider, curre
                     <td className="product-name">{p.nama || p.nama_produk || "-"}</td>
                     <td>{p.provider || "-"}</td>
                     <td>Rp {p.harga_jual ? p.harga_jual.toLocaleString("id-ID") : 0}</td>
-                    <td className={p.is_active ? "status-open" : "status-closed"}>
-                    {p.is_active ? "Open" : "Closed"}
+                    <td className={p.aktif ? "status-open" : "status-closed"}>
+                      {p.aktif ? "Open" : "Closed"}
                     </td>
                   </tr>
                 ))}
@@ -476,7 +476,7 @@ export default function Products({ products, total, page, currentProvider, curre
         ))
       ) : (
         <div style={{ padding: "40px", textAlign: "center", border: "1px dashed #ccc", color: "#666" }}>
-          Tidak ada daftar produk
+          Tidak ada daftar produk ditemukan.
         </div>
       )}
 
@@ -567,3 +567,4 @@ export default function Products({ products, total, page, currentProvider, curre
     </div>
   );
 }
+
